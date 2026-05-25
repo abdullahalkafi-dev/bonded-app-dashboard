@@ -14,6 +14,7 @@ import {
   useDeleteCircleMutation,
 } from "@/store/api/circles-api";
 import { useGetInterestsQuery } from "@/store/api/interests-api";
+import { useGetApprovedPriceTiersQuery } from "@/store/api/product-catalog-api";
 import { toast } from "sonner";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import type { Circle, Interest } from "@/types/api";
@@ -54,6 +55,12 @@ export default function CirclesPage() {
     value: item.slug,
   }));
 
+  const { data: priceTiers } = useGetApprovedPriceTiersQuery();
+  const priceOptions = (priceTiers ?? []).map((tier) => ({
+    label: `$${tier.toFixed(2)}`,
+    value: String(tier),
+  }));
+
   const fields: CrudField[] = [
     { name: "name", label: "Name", type: "text", required: true, placeholder: "Circle name" },
     { name: "description", label: "Description", type: "textarea", placeholder: "Brief description" },
@@ -78,7 +85,7 @@ export default function CirclesPage() {
     },
     { name: "city", label: "City", type: "text", placeholder: "e.g. New York", visibleWhen: { fieldName: "tier", fieldValue: "local" } },
     { name: "isPaid", label: "Paid Circle", type: "switch" },
-    { name: "price", label: "Price (USD)", type: "number", placeholder: "0", visibleWhen: { fieldName: "isPaid", fieldValue: true } },
+    { name: "price", label: "Price (USD)", type: "select", options: priceOptions, visibleWhen: { fieldName: "isPaid", fieldValue: true } },
   ];
 
   const columns: Column<Record<string, unknown>>[] = [

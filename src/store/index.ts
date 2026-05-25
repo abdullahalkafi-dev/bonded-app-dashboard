@@ -4,6 +4,7 @@ import { interestsApi } from "./api/interests-api";
 import { circlesApi } from "./api/circles-api";
 import { eventsApi } from "./api/events-api";
 import { marketplaceApi } from "./api/marketplace-api";
+import { productCatalogApi } from "./api/product-catalog-api";
 
 export const makeStore = () =>
   configureStore({
@@ -13,6 +14,7 @@ export const makeStore = () =>
       [circlesApi.reducerPath]: circlesApi.reducer,
       [eventsApi.reducerPath]: eventsApi.reducer,
       [marketplaceApi.reducerPath]: marketplaceApi.reducer,
+      [productCatalogApi.reducerPath]: productCatalogApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware().concat(
@@ -20,7 +22,8 @@ export const makeStore = () =>
         interestsApi.middleware,
         circlesApi.middleware,
         eventsApi.middleware,
-        marketplaceApi.middleware
+        marketplaceApi.middleware,
+        productCatalogApi.middleware
       ),
   });
 
