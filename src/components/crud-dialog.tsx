@@ -23,12 +23,15 @@ import {
 } from "@/components/ui/select";
 import { ImageUpload } from "./image-upload";
 import { MultiSelectSearch } from "./multi-select-search";
+import { LocationSearch, type LocationResult } from "./location-search";
+import { DatePicker } from "./ui/date-picker";
+import { TimeRangePicker } from "./time-range-picker";
 import { Loader2 } from "lucide-react";
 
 export interface CrudField {
   name: string;
   label: string;
-  type: "text" | "email" | "password" | "textarea" | "number" | "select" | "switch" | "image-upload" | "multi-select";
+  type: "text" | "email" | "password" | "textarea" | "number" | "select" | "switch" | "image-upload" | "multi-select" | "location-search" | "date-picker" | "time-range";
   required?: boolean;
   placeholder?: string;
   options?: { label: string; value: string }[];
@@ -47,6 +50,15 @@ interface CrudDialogProps {
   isLoading?: boolean;
 }
 
+function parseDdMmYyyy(value: unknown): Date | undefined {
+  if (typeof value !== "string" || !value) return undefined;
+  const match = value.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+  if (!match) return undefined;
+  const [, dd, mm, yyyy] = match;
+  const date = new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+  return isNaN(date.getTime()) ? undefined : date;
+}
+
 function buildInitialValues(
   fields: CrudField[],
   defaultValues?: Record<string, unknown>
@@ -54,13 +66,21 @@ function buildInitialValues(
   const initial: Record<string, unknown> = {};
   fields.forEach((field) => {
     if (defaultValues && defaultValues[field.name] !== undefined) {
-      initial[field.name] = defaultValues[field.name];
+      if (field.type === "date-picker") {
+        initial[field.name] = parseDdMmYyyy(defaultValues[field.name]) ?? null;
+      } else {
+        initial[field.name] = defaultValues[field.name];
+      }
     } else if (field.type === "switch") {
       initial[field.name] = false;
     } else if (field.type === "multi-select") {
       initial[field.name] = [];
     } else if (field.type === "number") {
       initial[field.name] = 0;
+    } else if (field.type === "location-search") {
+      initial[field.name] = null;
+    } else if (field.type === "date-picker") {
+      initial[field.name] = null;
     } else if (field.type === "select" && field.options?.length) {
       initial[field.name] = field.options[0].value;
     } else {
@@ -130,9 +150,16 @@ function CrudForm({
     fields.forEach((field) => {
       if (field.required) {
         const val = values[field.name];
-        const isEmpty =
-          val === "" || val === undefined || val === null ||
-          (Array.isArray(val) && val.length === 0);
+        let isEmpty: boolean;
+        if (field.type === "location-search") {
+          isEmpty = val === null || val === undefined;
+        } else if (field.type === "date-picker") {
+          isEmpty = val === null || val === undefined;
+        } else {
+          isEmpty =
+            val === "" || val === undefined || val === null ||
+            (Array.isArray(val) && val.length === 0);
+        }
         if (isEmpty) {
           newErrors[field.name] = `${field.label} is required`;
         }
@@ -217,6 +244,29 @@ function CrudForm({
               value={(values[field.name] as string[]) ?? []}
               onChange={(val) => updateValue(field.name, val)}
               placeholder={field.placeholder || `Select ${field.label}`}
+            />
+          ) : field.type === "location-search" ? (
+            <LocationSearch
+              onSelect={(loc: LocationResult) => updateValue(field.name, loc)}
+              placeholder={field.placeholder || "Search for a venue or location..."}
+              defaultValue={
+                values[field.name]
+                  ? String((values[field.name] as LocationResult).displayName ?? "")
+                  : ""
+              }
+            />
+          ) : field.type === "date-picker" ? (
+            <DatePicker
+              id={field.name}
+              value={values[field.name] as Date | undefined}
+              onChange={(date) => updateValue(field.name, date ?? null)}
+              placeholder={field.placeholder || "Pick a date"}
+            />
+          ) : field.type === "time-range" ? (
+            <TimeRangePicker
+              id={field.name}
+              value={String(values[field.name] ?? "")}
+              onChange={(val) => updateValue(field.name, val)}
             />
           ) : (
             <Input

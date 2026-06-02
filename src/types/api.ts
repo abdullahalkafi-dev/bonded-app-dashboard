@@ -100,6 +100,84 @@ export interface ExternalEvent {
   reviewCount?: number;
 }
 
+export interface BondedEvent {
+  _id: string;
+  title: string;
+  description: string;
+  category: string;
+  type: "in-person";
+  status: string;
+  visibility: string;
+  isBondedEvent: true;
+  coverImage: string | null;
+  phoneCountryCode: string | null;
+  phoneNumber: string | null;
+  showPhoneToAttendees: boolean;
+  facebookLink: string | null;
+  twitterLink: string | null;
+  showSocialLinksToAttendees: boolean;
+  ticketPrice: number;
+  currency: string;
+  isPaid: boolean;
+  totalSeats: number;
+  remainingSeats: number;
+  eventDate: string;
+  eventTime: string;
+  city: string | null;
+  country: string | null;
+  venueName: string | null;
+  address: string | null;
+  location: {
+    type: "Point";
+    coordinates: [number, number];
+    address?: string;
+    city?: string;
+    country?: string;
+  } | null;
+  host: string;
+  createdAt: string;
+  updatedAt: string;
+  totalTicketsSold?: number;
+  attendeeCount?: number;
+  totalIncome?: number;
+  attendees?: BondedEventAttendee[];
+}
+
+export interface BondedEventAttendee {
+  userId: string;
+  fullName: string;
+  email: string | null;
+  avatar: string | null;
+  phone: string | null;
+  city: string | null;
+  totalTickets: number;
+  lastPurchaseAt: string;
+}
+
+export interface AdminProfile {
+  _id: string;
+  fullName?: string;
+  username?: string;
+  bio?: string;
+  avatar?: string;
+  coverImage?: string;
+  email?: string;
+  phone?: string;
+  phoneCountryCode?: string;
+  dateOfBirth?: string;
+  gender?: string;
+  country?: string;
+  city?: string;
+  address?: string;
+  location?: {
+    type: "Point";
+    coordinates: [number, number];
+  };
+  interests: { _id: string; name: string; slug: string; category: string; image?: string }[];
+  connectionType?: string[];
+  profileCompleted: boolean;
+}
+
 export interface MarketplaceProduct {
   _id: string;
   interest: string;

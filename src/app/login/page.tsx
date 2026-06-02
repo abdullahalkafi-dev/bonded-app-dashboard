@@ -64,6 +64,14 @@ export default function LoginPage() {
                 required
                 autoComplete="current-password"
               />
+              <div className="text-right">
+                <a
+                  href="/forgot-password"
+                  className="text-sm text-muted-foreground hover:text-primary hover:underline"
+                >
+                  Forgot Password?
+                </a>
+              </div>
             </div>
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

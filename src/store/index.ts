@@ -5,6 +5,8 @@ import { circlesApi } from "./api/circles-api";
 import { eventsApi } from "./api/events-api";
 import { marketplaceApi } from "./api/marketplace-api";
 import { productCatalogApi } from "./api/product-catalog-api";
+import { bondedEventsApi } from "./api/bonded-events-api";
+import { profileApi } from "./api/profile-api";
 
 export const makeStore = () =>
   configureStore({
@@ -15,6 +17,8 @@ export const makeStore = () =>
       [eventsApi.reducerPath]: eventsApi.reducer,
       [marketplaceApi.reducerPath]: marketplaceApi.reducer,
       [productCatalogApi.reducerPath]: productCatalogApi.reducer,
+      [bondedEventsApi.reducerPath]: bondedEventsApi.reducer,
+      [profileApi.reducerPath]: profileApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware().concat(
@@ -23,7 +27,9 @@ export const makeStore = () =>
         circlesApi.middleware,
         eventsApi.middleware,
         marketplaceApi.middleware,
-        productCatalogApi.middleware
+        productCatalogApi.middleware,
+        bondedEventsApi.middleware,
+        profileApi.middleware
       ),
   });
 
